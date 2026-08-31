@@ -24,16 +24,18 @@ export function VideoModal({ activeVideo, onClose }) {
 
   if (!activeVideo) return null;
 
-  const isMp4 = activeVideo.videoUrl && activeVideo.videoUrl.endsWith('.mp4');
-  const isYoutube = activeVideo.videoUrl && (
-    activeVideo.videoUrl.includes('youtube.com') ||
-    activeVideo.videoUrl.includes('youtu.be') ||
-    activeVideo.videoUrl.includes('embed') ||
+  const rawUrl = activeVideo.videoUrl || activeVideo.url || '';
+  const cleanVideoUrl = rawUrl.split('#')[0];
+  const isMp4 = cleanVideoUrl.endsWith('.mp4');
+  const isYoutube = rawUrl && (
+    rawUrl.includes('youtube.com') ||
+    rawUrl.includes('youtu.be') ||
+    rawUrl.includes('embed') ||
     activeVideo.youtubeId ||
     (Array.isArray(activeVideo.category) ? activeVideo.category.includes('youtube') : activeVideo.category === 'youtube')
   );
 
-  let iframeSrc = activeVideo.videoUrl;
+  let iframeSrc = rawUrl;
   if (isYoutube && iframeSrc) {
     if (!iframeSrc.includes('autoplay=')) {
       iframeSrc += iframeSrc.includes('?') ? '&autoplay=1&rel=0' : '?autoplay=1&rel=0';
@@ -78,7 +80,7 @@ export function VideoModal({ activeVideo, onClose }) {
       >
         {isMp4 && !isYoutube ? (
           <video
-            src={activeVideo.videoUrl}
+            src={cleanVideoUrl}
             controls
             autoPlay
             playsInline

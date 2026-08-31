@@ -77,10 +77,14 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
     ? video.category.join(' / ')
     : video.category;
 
-  const isMp4 = video.videoUrl && video.videoUrl.endsWith('.mp4');
+  const rawUrl = video.videoUrl || video.url || '';
+  const cleanUrl = rawUrl.split('#')[0];
+  const isMp4 = cleanUrl.endsWith('.mp4');
   const posterUrl = video.poster || video.thumbnail;
-  const timeOffset = video.thumbnailTime !== undefined ? video.thumbnailTime : 0.001;
-  const videoSrc = video.videoUrl ? (video.videoUrl.includes('#t=') ? video.videoUrl : `${video.videoUrl}#t=${timeOffset}`) : '';
+  
+  // Timestamp customizado definido no objeto (thumbnailTime ou time), padrão 0.1
+  const timestamp = video.thumbnailTime !== undefined ? video.thumbnailTime : (video.time !== undefined ? video.time : 0.1);
+  const srcWithTimestamp = isMp4 ? `${cleanUrl}#t=${timestamp}` : cleanUrl;
 
   return (
     <motion.div
@@ -109,11 +113,12 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
       {/* Thumbnail de fundo (Vídeo local ou Imagem) - Mantido brilho total 100% */}
       {isMp4 ? (
         <video
-          src={videoSrc}
+          src={srcWithTimestamp}
           poster={posterUrl}
           preload="metadata"
           muted
           playsInline
+          controls={false}
           className="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:scale-105 transition-transform duration-500"
         />
       ) : (
