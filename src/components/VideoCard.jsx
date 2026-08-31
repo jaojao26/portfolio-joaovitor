@@ -82,8 +82,8 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
   const isMp4 = cleanUrl.endsWith('.mp4');
   const posterUrl = video.poster || video.thumbnail;
   
-  // Timestamp customizado definido no objeto (thumbnailTime ou time), padrão 0.1
-  const timestamp = video.thumbnailTime !== undefined ? video.thumbnailTime : (video.time !== undefined ? video.time : 0.1);
+  // Timestamp customizado definido no objeto (thumbnailTime ou time), padrão 1.5s
+  const timestamp = video.thumbnailTime !== undefined ? video.thumbnailTime : (video.time !== undefined ? video.time : 1.5);
   const srcWithTimestamp = isMp4 ? `${cleanUrl}#t=${timestamp}` : cleanUrl;
 
   return (
