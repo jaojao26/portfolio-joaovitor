@@ -77,7 +77,10 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
     ? video.category.join(' / ')
     : video.category;
 
-  const timeOffset = video.thumbnailTime !== undefined ? video.thumbnailTime : 1.5;
+  const isMp4 = video.videoUrl && video.videoUrl.endsWith('.mp4');
+  const posterUrl = video.poster || video.thumbnail;
+  const timeOffset = video.thumbnailTime !== undefined ? video.thumbnailTime : 0.001;
+  const videoSrc = video.videoUrl ? (video.videoUrl.includes('#t=') ? video.videoUrl : `${video.videoUrl}#t=${timeOffset}`) : '';
 
   return (
     <motion.div
@@ -104,17 +107,18 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
       }`}
     >
       {/* Thumbnail de fundo (Vídeo local ou Imagem) - Mantido brilho total 100% */}
-      {video.videoUrl && video.videoUrl.endsWith('.mp4') ? (
+      {isMp4 ? (
         <video
-          src={`${video.videoUrl}#t=${timeOffset}`}
-          preload="none"
+          src={videoSrc}
+          poster={posterUrl}
+          preload="metadata"
           muted
           playsInline
           className="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:scale-105 transition-transform duration-500"
         />
       ) : (
         <img
-          src={video.thumbnail}
+          src={posterUrl}
           alt={video.title}
           className="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:scale-105 transition-transform duration-500"
         />
