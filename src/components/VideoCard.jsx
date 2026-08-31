@@ -7,6 +7,10 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
   const inView = useInView(ref, { margin: '0px 0px -10% 0px' });
   const [hasPassedTop, setHasPassedTop] = useState(false);
 
+  const touchStartPos = useRef({ x: 0, y: 0 });
+  const isSwiping = useRef(false);
+  const lastTouchTime = useRef(0);
+
   useEffect(() => {
     const handleScroll = () => {
       if (ref.current) {
@@ -27,6 +31,37 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleTouchStart = (e) => {
+    if (e.touches && e.touches[0]) {
+      touchStartPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      isSwiping.current = false;
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (e.touches && e.touches[0]) {
+      const dx = Math.abs(e.touches[0].clientX - touchStartPos.current.x);
+      const dy = Math.abs(e.touches[0].clientY - touchStartPos.current.y);
+      if (dx > 10 || dy > 10) {
+        isSwiping.current = true;
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (!isSwiping.current) {
+      lastTouchTime.current = Date.now();
+      onSelectVideo(video);
+    }
+  };
+
+  const handleClick = () => {
+    if (Date.now() - lastTouchTime.current < 500) {
+      return;
+    }
+    onSelectVideo(video);
+  };
 
   const isVisible = inView || hasPassedTop;
   const colIndex = index % 4;
@@ -56,7 +91,10 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
       }}
       whileHover={{ y: -4, scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      onClick={() => onSelectVideo(video)}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onClick={handleClick}
       className={`group relative bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden cursor-pointer shadow-xl hover:shadow-2xl hover:border-zinc-700 transition-colors duration-300 flex flex-col ${
         isVertical
           ? 'aspect-[9/16]'
@@ -69,7 +107,7 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
       {video.videoUrl && video.videoUrl.endsWith('.mp4') ? (
         <video
           src={`${video.videoUrl}#t=${timeOffset}`}
-          preload="metadata"
+          preload="none"
           muted
           playsInline
           className="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:scale-105 transition-transform duration-500"

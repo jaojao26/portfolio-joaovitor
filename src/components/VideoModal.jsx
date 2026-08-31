@@ -14,13 +14,31 @@ export function VideoModal({ activeVideo, onClose }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
+  // Bloquear scroll do fundo quando o modal estiver aberto e restaurar ao fechar
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
   if (!activeVideo) return null;
 
   const isMp4 = activeVideo.videoUrl && activeVideo.videoUrl.endsWith('.mp4');
-  const isYoutube = activeVideo.videoUrl && activeVideo.videoUrl.includes('youtube.com');
-  const iframeSrc = isYoutube
-    ? `${activeVideo.videoUrl}?autoplay=1&rel=0`
-    : activeVideo.videoUrl;
+  const isYoutube = activeVideo.videoUrl && (
+    activeVideo.videoUrl.includes('youtube.com') ||
+    activeVideo.videoUrl.includes('youtu.be') ||
+    activeVideo.videoUrl.includes('embed') ||
+    activeVideo.youtubeId ||
+    (Array.isArray(activeVideo.category) ? activeVideo.category.includes('youtube') : activeVideo.category === 'youtube')
+  );
+
+  let iframeSrc = activeVideo.videoUrl;
+  if (isYoutube && iframeSrc) {
+    if (!iframeSrc.includes('autoplay=')) {
+      iframeSrc += iframeSrc.includes('?') ? '&autoplay=1&rel=0' : '?autoplay=1&rel=0';
+    }
+  }
 
   return (
     <motion.div
@@ -58,18 +76,20 @@ export function VideoModal({ activeVideo, onClose }) {
               : 'max-w-5xl aspect-video'
         }`}
       >
-        {isMp4 ? (
+        {isMp4 && !isYoutube ? (
           <video
             src={activeVideo.videoUrl}
             controls
             autoPlay
+            playsInline
+            preload="metadata"
             className="w-full h-full object-contain bg-black"
           />
         ) : (
           <iframe
             src={iframeSrc}
-            title={activeVideo.title}
-            className="w-full h-full"
+            title={activeVideo.title || 'Vídeo YouTube'}
+            className="w-full h-full border-0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
           ></iframe>
@@ -80,4 +100,5 @@ export function VideoModal({ activeVideo, onClose }) {
 }
 
 export default VideoModal;
+
 
