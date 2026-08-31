@@ -50,7 +50,6 @@ function App() {
           categories={categories}
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
-          filteredVideosCount={filteredVideos.length}
         />
 
         {/* 3. Grade de Vídeos (Verticais, Quadrados e Horizontais) */}

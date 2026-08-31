@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 
-export function FilterBar({ categories, selectedCategory, onSelectCategory, filteredVideosCount }) {
+export function FilterBar({ categories, selectedCategory, onSelectCategory }) {
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
@@ -14,9 +14,6 @@ export function FilterBar({ categories, selectedCategory, onSelectCategory, filt
           <h2 className="text-[11px] uppercase tracking-[0.25em] font-mono text-zinc-500 font-bold">
             Trabalhos Selecionados
           </h2>
-          <span className="text-xs font-mono text-zinc-500">
-            {filteredVideosCount} {filteredVideosCount === 1 ? 'vídeo' : 'vídeos'} exibidos
-          </span>
         </div>
 
         <div className="flex flex-wrap gap-2 pt-2">

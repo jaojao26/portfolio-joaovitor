@@ -86,6 +86,9 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
   const timestamp = video.thumbnailTime !== undefined ? video.thumbnailTime : (video.time !== undefined ? video.time : 1.5);
   const srcWithTimestamp = isMp4 ? `${cleanUrl}#t=${timestamp}` : cleanUrl;
 
+  // Preload condicional: se estiver na viewport (isVisible), permite carregar metadados. Fora da tela, preload="none"
+  const preloadMode = isVisible ? 'metadata' : 'none';
+
   return (
     <motion.div
       ref={ref}
@@ -110,24 +113,24 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
             : 'aspect-video'
       }`}
     >
-      {/* Thumbnail de fundo (Vídeo local ou Imagem) - Mantido brilho total 100% */}
-      {isMp4 ? (
+      {/* Mídia do Card: Se houver imagem de poster/thumbnail estática, renderiza <img> leve com loading="lazy". Caso contrário, usa <video> com preload condicional */}
+      {posterUrl ? (
+        <img
+          src={posterUrl}
+          alt={video.title}
+          loading="lazy"
+          className="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:scale-105 transition-transform duration-500"
+        />
+      ) : isMp4 ? (
         <video
           src={srcWithTimestamp}
-          poster={posterUrl}
-          preload="metadata"
+          preload={preloadMode}
           muted
           playsInline
           controls={false}
           className="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:scale-105 transition-transform duration-500"
         />
-      ) : (
-        <img
-          src={posterUrl}
-          alt={video.title}
-          className="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:scale-105 transition-transform duration-500"
-        />
-      )}
+      ) : null}
 
       {/* Gradiente sutil apenas na base para contraste do texto sem apagar a mídia */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent transition-opacity duration-300 pointer-events-none"></div>
@@ -137,11 +140,14 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
         <img
           src={video.clientAvatar}
           alt={video.client}
+          loading="lazy"
           className="w-7 h-7 rounded-full border border-white/20 object-cover shrink-0"
         />
         <div className="flex flex-col leading-tight overflow-hidden">
-          <span className="text-xs font-semibold text-white tracking-wide flex items-center gap-1">
-            @{video.client}
+          <div className="flex items-center gap-1">
+            <span className="text-xs font-semibold text-white tracking-wide">
+              @{video.client}
+            </span>
             {video.verified && (
               <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-[#0095f6] text-white shrink-0">
                 <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="4">
@@ -149,7 +155,7 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
                 </svg>
               </span>
             )}
-          </span>
+          </div>
           <span className="text-[9px] text-zinc-300 font-mono uppercase tracking-widest truncate">
             {categoryLabel}
           </span>
