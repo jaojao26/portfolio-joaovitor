@@ -125,7 +125,7 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
         />
         <div className="flex flex-col leading-tight overflow-hidden">
           <div className="flex items-center gap-1">
-            <span className="text-xs font-semibold text-white tracking-wide">
+            <span className="text-xs font-semibold text-white tracking-wide leading-none inline-flex items-center">
               @{video.client}
             </span>
             {video.verified && (
