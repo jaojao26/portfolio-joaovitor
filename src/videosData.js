@@ -677,8 +677,8 @@ export const videos = [
     client: clientAiqfome,
     clientAvatar: avatarAiqfome,
     verified: isVerified,
-    category: ['reels', 'criativos', 'animacoes'],
-    aspectRatio: '9/16',
+    category: ['criativos', 'animacoes'],
+    aspectRatio: '1/1',
     videoUrl: `${folderAiqfome}/reel22-A.mp4`
   },
   {
