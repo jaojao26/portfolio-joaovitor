@@ -34,14 +34,14 @@ export function Header() {
       className="max-w-7xl mx-auto px-6 pt-20 pb-12 flex flex-col md:flex-row md:justify-between md:items-end gap-8"
     >
       <div className="max-w-2xl">
-        {/* Indicador PORTFOLIO */}
+        {/* Indicador PORTFÓLIO */}
         <motion.div variants={itemVariants} className="inline-flex items-center gap-2 mb-4">
           <span className="relative flex h-2.5 w-2.5 shrink-0">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
           </span>
           <span className="text-[10px] tracking-[0.2em] text-red-500 font-mono font-bold uppercase leading-none">
-            PORTFOLIO
+            PORTFÓLIO
           </span>
         </motion.div>
 
