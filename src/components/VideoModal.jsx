@@ -85,6 +85,8 @@ export function VideoModal({ activeVideo, onClose }) {
             autoPlay
             playsInline
             preload="metadata"
+            controlsList="nodownload"
+            onContextMenu={(e) => e.preventDefault()}
             className="w-full h-full object-contain bg-black"
           />
         ) : (
