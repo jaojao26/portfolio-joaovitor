@@ -3,6 +3,15 @@ import { motion } from 'framer-motion';
 
 export function Preloader({ onComplete }) {
   const [progress, setProgress] = useState(0);
+  const [isEnding, setIsEnding] = useState(false);
+
+  // Bloquear o scroll do body enquanto o Preloader estiver ativo
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
 
   useEffect(() => {
     const startTime = performance.now();
@@ -24,9 +33,10 @@ export function Preloader({ onComplete }) {
         animationFrameId = requestAnimationFrame(updateProgress);
       } else {
         setProgress(100);
+        setIsEnding(true);
         setTimeout(() => {
           if (onComplete) onComplete();
-        }, 250);
+        }, 300);
       }
     };
 
@@ -39,42 +49,49 @@ export function Preloader({ onComplete }) {
 
   return (
     <motion.div
-      initial={{ opacity: 1 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      initial={{ y: '0%' }}
+      exit={{ y: '-100%' }}
+      transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}
       className="fixed inset-0 z-[100] flex flex-col justify-between p-8 md:p-16 bg-[#050505] text-white select-none pointer-events-none"
     >
-      {/* Topo: Nome / Branding Minimalista */}
-      <div className="flex items-center justify-between text-xs tracking-widest font-mono text-zinc-400 uppercase">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-          <span className="font-semibold text-white tracking-wider">JOÃO VITOR</span>
+      <motion.div
+        animate={{ opacity: isEnding ? 0 : 1 }}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
+        className="w-full h-full flex flex-col justify-between"
+      >
+        {/* Topo: Nome / Branding Minimalista */}
+        <div className="flex items-center justify-between text-xs tracking-widest font-mono text-zinc-400 uppercase">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+            <span className="font-semibold text-white tracking-wider">JOÃO VITOR</span>
+          </div>
+          <span className="text-zinc-500">PORTFÓLIO &copy; 2026</span>
         </div>
-        <span className="text-zinc-500">PORTFÓLIO &copy; 2026</span>
-      </div>
 
-      {/* Centro: Contagem de Porcentagem Estilo Editorial / Framer */}
-      <div className="my-auto flex flex-col items-center justify-center">
-        <div className="relative font-mono font-bold tracking-tighter text-7xl md:text-9xl text-white">
-          <span>{progress}</span>
-          <span className="text-red-500 font-light text-4xl md:text-6xl ml-1">%</span>
+        {/* Centro: Contagem de Porcentagem Estilo Editorial / Framer */}
+        <div className="my-auto flex flex-col items-center justify-center">
+          <div className="relative font-mono font-bold tracking-tighter text-7xl md:text-9xl text-white">
+            <span>{progress}</span>
+            <span className="text-red-500 font-light text-4xl md:text-6xl ml-1">%</span>
+          </div>
+          <p className="text-[10px] md:text-xs font-mono uppercase tracking-[0.3em] text-zinc-500 mt-4">
+            Carregando Experiências
+          </p>
         </div>
-        <p className="text-[10px] md:text-xs font-mono uppercase tracking-[0.3em] text-zinc-500 mt-4">
-          Carregando Experiências
-        </p>
-      </div>
 
-      {/* Base: Barra de Progresso Sutil */}
-      <div className="w-full max-w-md mx-auto flex flex-col gap-2">
-        <div className="w-full h-[2px] bg-zinc-900 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-red-600 to-red-400 transition-all duration-75 ease-out"
-            style={{ width: `${progress}%` }}
-          />
+        {/* Base: Barra de Progresso Sutil */}
+        <div className="w-full max-w-md mx-auto flex flex-col gap-2">
+          <div className="w-full h-[2px] bg-zinc-900 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-red-600 to-red-400 transition-all duration-75 ease-out"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
 
 export default Preloader;
+

@@ -3,9 +3,9 @@ import { motion } from 'framer-motion';
 export function FilterBar({ categories, selectedCategory, onSelectCategory }) {
   return (
     <motion.section
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: -24 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.7, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
       className="max-w-7xl mx-auto px-6 py-10"
     >
       <div className="flex flex-col gap-4">
