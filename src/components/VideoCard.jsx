@@ -4,7 +4,7 @@ import { Play } from 'lucide-react';
 
 export function VideoCard({ video, index = 0, onSelectVideo }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { margin: '0px 0px -10% 0px' });
+  const inView = useInView(ref, { margin: '0px 0px -50px 0px' });
   const [hasPassedTop, setHasPassedTop] = useState(false);
 
   const touchStartPos = useRef({ x: 0, y: 0 });
@@ -64,11 +64,6 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
   };
 
   const isVisible = inView || hasPassedTop;
-  const colIndex = index % 4;
-
-  // Staggered reveal pós-preloader para os cards da primeira dobra
-  const baseDelay = index < 4 ? 0.65 : 0.05;
-  const delay = isVisible ? baseDelay + colIndex * 0.08 : (3 - colIndex) * 0.06;
 
   const isVertical = video.aspectRatio === '9/16';
   const isSquare = video.aspectRatio === '1/1' || video.aspectRatio === '1:1';
@@ -82,11 +77,11 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 35 }}
-      animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 35 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       transition={{
-        duration: 0.8,
-        delay: delay,
+        duration: 0.4,
+        delay: 0,
         ease: [0.22, 1, 0.36, 1],
       }}
       whileHover={{ y: -4, scale: 1.02 }}
