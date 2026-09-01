@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import Lenis from 'lenis';
 import { videos, categories } from './videosData';
 import { Header } from './components/Header';
 import { FilterBar } from './components/FilterBar';
@@ -12,6 +13,42 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [activeVideo, setActiveVideo] = useState(null);
+  const lenisRef = useRef(null);
+
+  // Inicializar o Lenis para Smooth Inertia Scrolling estilo Framer/Awwwards
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2, // Duração da inércia
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Curva exponencial suave
+      smoothWheel: true,
+      wheelMultiplier: 0.9, // Sensibilidade equilibrada
+      touchMultiplier: 1.5,
+      infinite: false,
+    });
+
+    lenisRef.current = lenis;
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+
+  // Pausar o Lenis quando o modal de vídeo estiver aberto e retomar ao fechar
+  useEffect(() => {
+    if (!lenisRef.current) return;
+    if (activeVideo) {
+      lenisRef.current.stop();
+    } else {
+      lenisRef.current.start();
+    }
+  }, [activeVideo]);
 
   // Filtrar os vídeos com base na categoria selecionada (suporta formato simples e múltiplos em Array)
   const filteredVideos = selectedCategory === 'all'
