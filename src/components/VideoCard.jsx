@@ -77,17 +77,7 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
     ? video.category.join(' / ')
     : video.category;
 
-  const rawUrl = video.videoUrl || video.url || '';
-  const cleanUrl = rawUrl.split('#')[0];
-  const isMp4 = cleanUrl.endsWith('.mp4');
-  const posterUrl = video.poster || video.thumbnail;
-  
-  // Timestamp customizado definido no objeto (thumbnailTime ou time), padrão 1.5s
-  const timestamp = video.thumbnailTime !== undefined ? video.thumbnailTime : (video.time !== undefined ? video.time : 1.5);
-  const srcWithTimestamp = isMp4 ? `${cleanUrl}#t=${timestamp}` : cleanUrl;
-
-  // Preload condicional: se estiver na viewport (isVisible), permite carregar metadados. Fora da tela, preload="none"
-  const preloadMode = isVisible ? 'metadata' : 'none';
+  const posterUrl = video.poster || video.thumbnail || `/thumbnails/${video.id}.webp`;
 
   return (
     <motion.div
@@ -113,24 +103,14 @@ export function VideoCard({ video, index = 0, onSelectVideo }) {
             : 'aspect-video'
       }`}
     >
-      {/* Mídia do Card: Se houver imagem de poster/thumbnail estática, renderiza <img> leve com loading="lazy". Caso contrário, usa <video> com preload condicional */}
-      {posterUrl ? (
-        <img
-          src={posterUrl}
-          alt={video.title}
-          loading="lazy"
-          className="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:scale-105 transition-transform duration-500"
-        />
-      ) : isMp4 ? (
-        <video
-          src={srcWithTimestamp}
-          preload={preloadMode}
-          muted
-          playsInline
-          controls={false}
-          className="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:scale-105 transition-transform duration-500"
-        />
-      ) : null}
+      {/* Imagem estática leve da Thumbnail do Card */}
+      <img
+        src={posterUrl}
+        alt={video.title}
+        loading="lazy"
+        decoding="async"
+        className="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:scale-105 transition-transform duration-500"
+      />
 
       {/* Gradiente sutil apenas na base para contraste do texto sem apagar a mídia */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent transition-opacity duration-300 pointer-events-none"></div>

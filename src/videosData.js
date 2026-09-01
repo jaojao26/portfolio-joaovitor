@@ -709,6 +709,8 @@ export const videos = [
     verified: isVerified,
     category: ['reels', 'animacoes'],
     aspectRatio: '9/16',
-    videoUrl: `${folderAiqfome}/reel25-A.mp4`
   }
-];
+].map((v) => ({
+  ...v,
+  poster: v.poster || v.thumbnail || `/thumbnails/${v.id}.webp`
+}));
